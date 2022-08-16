@@ -2,6 +2,20 @@
 (require-package 'python-mode)
 (require 'python-mode)
 
+(use-package python
+  :mode ("\\.py" . python-mode)
+  :config
+  (setq python-indent-soffset 4)
+  (elpy-enable))
+
+(use-package pyvenv
+  :ensure t
+  :config
+  (setenv "WORKON_HOME" "~/envs")
+  (setq python-shell-interpreter "python3")
+  (pyvenv-mode t)
+)
+
 (use-package elpy
   :ensure t
   :defer t
@@ -12,34 +26,21 @@
   (elpy-mode . flycheck-mode) ;; 添加flycheck, 替换flymake
   :config
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (setq elpy-rpc-backend "jedi")
+  )
+
+(use-package flycheck
+  :ensure t
+  :defer t
+  :init
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (add-hook 'elpy-mode-hook 'flycheck-mode)
+  )
+
+(use-package dap-python
+  :defer t
   )
 
 
-;; Enable Flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode);全局开启
-(when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-
-(require 'virtualenvwrapper)
-(venv-initialize-interactive-shells)
-(venv-initialize-eshell)
-(setq venv-location "~/venv/");
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (virtualenvwrapper use-package rust-mode material-theme magit flycheck elpygen elpy cargo better-defaults))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(put 'upcase-region 'disabled nil)
+(provide 'init-python)
