@@ -12,7 +12,7 @@
   :ensure t
   :config
   (setenv "WORKON_HOME" "~/envs")
-  (setq python-shell-interpreter "python3")
+  (setq python-shell-interpreter "~/envs/ev3/bin/python3")
   (pyvenv-mode t)
 )
 
